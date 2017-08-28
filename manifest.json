@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+  "name": "Load Progress Bar",
+  "version": "0.1",
+  "description": "Adds minimalistic load progress bar on top of each page",
+  "homepage_url": "https://github.com/luben/load-progress-bar",
+
+  "icons": {
+    "48": "icons/load_progress_bar-48.png",
+    "96": "icons/load_progress_bar-96.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["js/load_progress_bar.js"],
+      "run_at": "document_start"
+    }
+  ],
+
+  "options_ui": {
+      "page": "settings/options.html"
+  },
+
+  "permissions": ["storage"]
+}
