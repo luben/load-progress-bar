@@ -3,7 +3,6 @@
 
     var inserted = 0;
     var loaded   = 0;
-    var started = false;
 
     const listenerCfg = {"once": true, "capture": true, "passive": true};
 
@@ -35,12 +34,6 @@
             if (pct <= 100) {
                 const gradient = `linear-gradient(90deg, ${color}, ${color} ${pct}%, rgba(0,0,0,0) ${pct}%, rgba(0,0,0,0))`;
                 document.body.style.borderImageSource = gradient;
-                if (!started) {
-                    document.body.style.borderImageSlice = "1";
-                    document.body.style.borderTopStyle = "solid";
-                    document.body.style.borderTopWidth = `${width}px`;
-                    started = true;
-                }
             }
         }
     }
@@ -59,6 +52,9 @@
                 if (node.nodeName == "BODY") {
                     inserted++;
                     node.addEventListener( "load", () => onLoadHandler(node), listenerCfg);
+                    node.style.borderImageSlice = "1";
+                    node.style.borderTopStyle = "solid";
+                    node.style.borderTopWidth = `${width}px`;
                     updateProgress();
                 } else if ((node.nodeName == "SCRIPT" ||
                             node.nodeName == "VIDEO"  || node.nodeName == "IMG"    ||
