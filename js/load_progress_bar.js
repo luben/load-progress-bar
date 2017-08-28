@@ -26,8 +26,8 @@
 
     var color = "rgba(255,0,0,1)";
     var width = "1";
-    let getColor = browser.storage.local.get("color").then((item) => color = hexToRgbA(item.color), onError);
-    let getWidth = browser.storage.local.get("width").then((item) => width = item.width, onError);
+    let getColor = browser.storage.local.get("color").then((item) => color = hexToRgbA(item.color || "#FF0000"), onError);
+    let getWidth = browser.storage.local.get("width").then((item) => width = item.width || "1", onError);
 
     function updateProgress() {
         if (document.body != null) {
