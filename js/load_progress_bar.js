@@ -3,6 +3,7 @@
 
     var inserted = 0;
     var loaded   = 0;
+    var css = null;
 
     const listenerCfg = {"once": true, "capture": true, "passive": true};
 
@@ -30,10 +31,24 @@
 
     function updateProgress() {
         if (document.body != null) {
+            if (css == null) {
+                css = document.createElement('style');
+                css.type = 'text/css';
+                document.getElementsByTagName("head")[0].appendChild(css);
+            }
             const pct = 100 - (inserted - loaded) * 100 / inserted;
             if (pct <= 100) {
-                const gradient = `linear-gradient(90deg, ${color}, ${color} ${pct}%, rgba(0,0,0,0) ${pct}%, rgba(0,0,0,0))`;
-                document.body.style.borderImageSource = gradient;
+                css.innerHTML = `
+                    html:before {
+                        position: fixed;
+                        content: "";
+                        z-index: 2147483647;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        background: linear-gradient(90deg, ${color}, ${color} ${pct}%, rgba(0,0,0,0) ${pct}%, rgba(0,0,0,0));
+                        height: ${width}px;
+                    }`;
             }
         }
     }
@@ -41,8 +56,8 @@
     function onLoadHandler(node) {
         loaded++;
         updateProgress()
-        if (node.self == node) { // i.e. it's window
-            document.body.style.borderTopWidth = "0";
+        if (node.self == node && css != null) { // i.e. it's window
+            css.remove();
         }
     }
 
@@ -52,9 +67,6 @@
                 if (node.nodeName == "BODY") {
                     inserted++;
                     node.addEventListener( "load", () => onLoadHandler(node), listenerCfg);
-                    node.style.borderImageSlice = "1";
-                    node.style.borderTopStyle = "solid";
-                    node.style.borderTopWidth = `${width}px`;
                     updateProgress();
                 } else if ((node.nodeName == "SCRIPT" ||
                             node.nodeName == "VIDEO"  || node.nodeName == "IMG"    ||
