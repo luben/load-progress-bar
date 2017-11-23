@@ -34,11 +34,12 @@
             if (css == null) {
                 css = document.createElement('style');
                 css.type = 'text/css';
-                document.getElementsByTagName("head")[0].appendChild(css);
+                css.appendChild(document.createTextNode(""));
+                document.body.appendChild(css);
             }
             const pct = 100 - (inserted - loaded) * 100 / inserted;
             if (pct <= 100) {
-                css.innerHTML = `
+                css.firstChild.replaceWith(document.createTextNode(`
                     html:before {
                         position: fixed;
                         content: "";
@@ -48,7 +49,7 @@
                         right: 0;
                         background: linear-gradient(90deg, ${color}, ${color} ${pct}%, rgba(0,0,0,0) ${pct}%, rgba(0,0,0,0));
                         height: ${width}px;
-                    }`;
+                    }`));
             }
         }
     }
