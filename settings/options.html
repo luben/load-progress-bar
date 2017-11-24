@@ -5,9 +5,23 @@
   </head>
   <body>
     <form>
-        <div><label>Progress bar color: <input type="color" id="color"></label></div>
         <div>
-            <label>Progress bar width: <input type="range" id="width" min="1" max="10" step="1"></label>
+            <label>Progress bar color:
+                <input type="color" id="color">
+            </label>
+        </div>
+        <div>
+            <label>Progress bar width:
+                <input type="range" id="width" min="1" max="10" step="1">
+            </label>
+        </div>
+        <div>
+            <label>Postition:
+                <select name="place" id="place">
+                    <option value="top">top</option>
+                    <option value="bottom">bottom</option>
+                </select>
+            <label>
         </div>
         <button type="submit">Save</button>
     </form>

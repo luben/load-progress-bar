@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
   "name": "Load Progress Bar",
-  "version": "0.3",
-  "description": "Adds minimalistic load progress bar on top of each page",
+  "version": "0.4",
+  "description": "Adds minimalistic load progress bar on each page",
   "homepage_url": "https://github.com/luben/load-progress-bar",
 
   "applications": {

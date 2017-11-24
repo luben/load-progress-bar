@@ -26,8 +26,11 @@
 
     var color = "rgba(255,0,0,1)";
     var width = "1";
-    let getColor = browser.storage.local.get("color").then((item) => color = hexToRgbA(item.color || "#FF0000"), onError);
-    let getWidth = browser.storage.local.get("width").then((item) => width = item.width || "1", onError);
+    var place = "top";
+
+    browser.storage.local.get("color").then((item) => color = hexToRgbA(item.color || "#FF0000"), onError);
+    browser.storage.local.get("width").then((item) => width = item.width || "1", onError);
+    browser.storage.local.get("place").then((item) => place = item.place || "top", onError);
 
     function updateProgress() {
         if (document.body != null) {
@@ -39,17 +42,34 @@
             }
             const pct = 100 - (inserted - loaded) * 100 / inserted;
             if (pct <= 100) {
-                css.firstChild.replaceWith(document.createTextNode(`
-                    html:before {
-                        position: fixed;
-                        content: "";
-                        z-index: 2147483647;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        background: linear-gradient(90deg, ${color}, ${color} ${pct}%, rgba(0,0,0,0) ${pct}%, rgba(0,0,0,0));
-                        height: ${width}px;
-                    }`));
+                if (place == "top") {
+                    css.firstChild.replaceWith(document.createTextNode(`
+                        html:before {
+                            position: fixed;
+                            content: "";
+                            z-index: 2147483647;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            background: linear-gradient(90deg, ${color}, ${color} ${pct}%, rgba(0,0,0,0) ${pct}%, rgba(0,0,0,0));
+                            height: ${width}px;
+                        }`));
+                } else if (place == "bottom") {
+                    css.firstChild.replaceWith(document.createTextNode(`
+                        html:before {
+                            position: absolute;
+                            content: "";
+                            z-index: 2147483647;
+                            bottom: 0;
+                            left: 0;
+                            right: 0;
+                            background: linear-gradient(90deg, ${color}, ${color} ${pct}%, rgba(0,0,0,0) ${pct}%, rgba(0,0,0,0));
+                            height: ${width}px;
+                        }`));
+                } else {
+                    console.log(`Unexpected place: ${place}`);
+                }
+
             }
         }
     }
