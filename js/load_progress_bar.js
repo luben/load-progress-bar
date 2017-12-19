@@ -57,7 +57,7 @@
                 } else if (place == "bottom") {
                     css.firstChild.replaceWith(document.createTextNode(`
                         html:before {
-                            position: absolute;
+                            position: fixed;
                             content: "";
                             z-index: 2147483647;
                             bottom: 0;
