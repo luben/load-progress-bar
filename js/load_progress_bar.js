@@ -77,8 +77,14 @@
     function onLoadHandler(node) {
         loaded++;
         updateProgress()
-        if (node.self == node && css != null) { // i.e. it's window
-            css.remove();
+        if (node.self == node && css != null) { // i.e. the window is loaded
+            css.firstChild.after(document.createTextNode(`
+                html:before {
+                    transition: opacity 0.85s ease-out;
+                    opacity: 0;
+                }
+            `));
+            setTimeout(function() { css.remove() }, 850);
         }
     }
 
