@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Load Progress Bar",
-  "version": "0.6",
+  "version": "0.7",
   "description": "Adds minimalistic load progress bar on each page",
   "homepage_url": "https://github.com/luben/load-progress-bar",
 
