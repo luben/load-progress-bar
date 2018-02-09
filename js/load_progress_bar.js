@@ -25,11 +25,11 @@
     }
 
     var color = "rgba(255,0,0,1)";
-    var width = "1";
+    var width = "2";
     var place = "top";
 
     browser.storage.local.get("color").then((item) => color = hexToRgbA(item.color || "#FF0000"), onError);
-    browser.storage.local.get("width").then((item) => width = item.width || "1", onError);
+    browser.storage.local.get("width").then((item) => width = item.width || "2", onError);
     browser.storage.local.get("place").then((item) => place = item.place || "top", onError);
 
     function updateProgress() {
