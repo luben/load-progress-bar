@@ -69,7 +69,6 @@
                 } else {
                     console.log(`Unexpected place: ${place}`);
                 }
-
             }
         }
     }
@@ -95,15 +94,11 @@
                     inserted++;
                     node.addEventListener( "load", () => onLoadHandler(node), listenerCfg);
                     updateProgress();
-                } else if ((node.nodeName == "SCRIPT" ||
+                } else if (((node.nodeName == "SCRIPT" ||
                             node.nodeName == "VIDEO"  || node.nodeName == "IMG"    ||
-                            node.nodeName == "IFRAME" || node.nodeName == "FRAME") && node.src != "" ) {
-                    inserted++;
-                    node.addEventListener( "error",   () => onLoadHandler(node), listenerCfg);
-                    node.addEventListener( "abort",   () => onLoadHandler(node), listenerCfg);
-                    node.addEventListener( "load",    () => onLoadHandler(node), listenerCfg);
-                    updateProgress();
-                } else if (node.nodeName == "LINK" && node.rel == "stylesheet" && window.matchMedia(node.media)) {
+                            node.nodeName == "IFRAME" || node.nodeName == "FRAME") && node.src != "" ) ||
+                            (node.nodeName == "LINK" && node.rel == "stylesheet" && window.matchMedia(node.media))
+                ) {
                     inserted++;
                     node.addEventListener( "error",   () => onLoadHandler(node), listenerCfg);
                     node.addEventListener( "abort",   () => onLoadHandler(node), listenerCfg);
