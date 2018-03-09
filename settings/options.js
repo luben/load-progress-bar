@@ -14,7 +14,7 @@ function restoreOptions() {
   }
 
   function setWidthChoice(result) {
-    document.querySelector("#width").value = result.width || "1";
+    document.querySelector("#width").value = result.width || "2";
   }
 
   function setPlaceChoice(result) {

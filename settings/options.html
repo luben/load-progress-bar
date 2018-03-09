@@ -2,26 +2,33 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <style>
+        label {
+            display: block;
+            float: left;
+            width: 120pt;
+            clear: both;
+            text-align: right;
+            padding-right: 5pt;
+        }
+    </style>
   </head>
   <body>
     <form>
         <div>
-            <label>Progress bar color:
-                <input type="color" id="color">
-            </label>
+            <label>Progress bar color:</label>
+            <input type="color" id="color">
         </div>
         <div>
-            <label>Progress bar thickness:
+            <label>Progress bar thickness:</label>
                 <input type="range" id="width" min="1" max="10" step="1">
-            </label>
         </div>
         <div>
-            <label>Postition:
-                <select name="place" id="place">
-                    <option value="top">top</option>
-                    <option value="bottom">bottom</option>
-                </select>
-            <label>
+            <label>Postition:</label>
+            <select name="place" id="place">
+                <option value="top">top</option>
+                <option value="bottom">bottom</option>
+            </select>
         </div>
         <button type="submit">Save</button>
     </form>
