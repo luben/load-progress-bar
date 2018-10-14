@@ -3,6 +3,8 @@
 
     var inserted = 0;
     var loaded   = 0;
+    var last_pct = 0;
+    var last_ts  = Date.now();
     var css = null;
 
     const listenerCfg = {"once": true, "capture": true, "passive": true};
@@ -37,13 +39,13 @@
             if (css == null) {
                 css = document.createElement('style');
                 css.type = 'text/css';
-                css.appendChild(document.createTextNode(""));
-                document.body.appendChild(css);
-            }
-            const pct = 100 - (inserted - loaded) * 100 / inserted;
-            if (pct <= 100) {
+                css.appendChild(document.createTextNode(`
+                    html:before {
+                        background: linear-gradient(90deg, ${color}, ${color} 1%, rgba(0,0,0,0) 1%, rgba(0,0,0,0));
+                    }
+                `));
                 if (place == "top") {
-                    css.firstChild.replaceWith(document.createTextNode(`
+                    css.appendChild(document.createTextNode(`
                         html:before {
                             position: fixed;
                             content: "";
@@ -51,11 +53,11 @@
                             top: 0;
                             left: 0;
                             right: 0;
-                            background: linear-gradient(90deg, ${color}, ${color} ${pct}%, rgba(0,0,0,0) ${pct}%, rgba(0,0,0,0));
                             height: ${width}px;
-                        }`));
-                } else if (place == "bottom") {
-                    css.firstChild.replaceWith(document.createTextNode(`
+                        }
+                    `));
+                } else if (place == "bottom"){
+                    css.appendChild(document.createTextNode(`
                         html:before {
                             position: fixed;
                             content: "";
@@ -63,12 +65,24 @@
                             bottom: 0;
                             left: 0;
                             right: 0;
-                            background: linear-gradient(90deg, ${color}, ${color} ${pct}%, rgba(0,0,0,0) ${pct}%, rgba(0,0,0,0));
                             height: ${width}px;
-                        }`));
+                        }
+                    `));
                 } else {
                     console.log(`Unexpected place: ${place}`);
                 }
+                document.body.appendChild(css);
+            }
+            const pct = 100 - (inserted - loaded) * 100 / inserted;
+            const ts = Date.now()
+            if (pct < 100 && pct > last_pct && ts > last_ts + 50) {
+                last_pct = pct;
+                last_ts = ts;
+                css.firstChild.replaceWith(document.createTextNode(`
+                    html:before {
+                        background: linear-gradient(90deg, ${color}, ${color} ${pct}%, rgba(0,0,0,0) ${pct}%, rgba(0,0,0,0));
+                    }
+                `));
             }
         }
     }
@@ -77,8 +91,9 @@
         loaded++;
         updateProgress()
         if (node.self == node && css != null) { // i.e. the window is loaded
-            css.firstChild.after(document.createTextNode(`
+            css.firstChild.replaceWith(document.createTextNode(`
                 html:before {
+                    background: linear-gradient(90deg, ${color}, ${color} 100%, rgba(0,0,0,0) 100%, rgba(0,0,0,0));
                     transition: opacity 0.85s ease-out;
                     opacity: 0;
                 }
