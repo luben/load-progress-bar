@@ -31,13 +31,14 @@
     var width = "2";
     var place = "top";
 
-    browser.storage.local.get("color").then((item) => color = hexToRgbA(item.color || "#FF0000"), onError);
-    browser.storage.local.get("width").then((item) => width = item.width || "2", onError);
-    browser.storage.local.get("place").then((item) => place = item.place || "top", onError);
-
     function updateProgress() {
         if (document.body != null && !finished) {
             if (css == null) {
+
+                browser.storage.local.get("color").then((item) => color = hexToRgbA(item.color || "#FF0000"), onError);
+                browser.storage.local.get("width").then((item) => width = item.width || "2", onError);
+                browser.storage.local.get("place").then((item) => place = item.place || "top", onError);
+
                 css = document.createElement('style');
                 css.type = 'text/css';
                 css.appendChild(document.createTextNode(`
