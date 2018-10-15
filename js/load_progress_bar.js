@@ -27,18 +27,9 @@
         return "rgba(255,0,0,1)";
     }
 
-    var color = "rgba(255,0,0,1)";
-    var width = "2";
-    var place = "top";
-
     function updateProgress() {
         if (document.body != null && !finished) {
             if (css == null) {
-
-                browser.storage.local.get("color").then((item) => color = hexToRgbA(item.color || "#FF0000"), onError);
-                browser.storage.local.get("width").then((item) => width = item.width || "2", onError);
-                browser.storage.local.get("place").then((item) => place = item.place || "top", onError);
-
                 css = document.createElement('style');
                 css.type = 'text/css';
                 css.appendChild(document.createTextNode(`
@@ -46,36 +37,28 @@
                         right: 99%;
                     }
                 `));
-                if (place == "top") {
-                    css.appendChild(document.createTextNode(`
-                        html:before {
-                            background: ${color};
-                            transition: right 0.25s linear, opacity 0.85s ease-out;
-                            position: fixed;
-                            content: "";
-                            z-index: 2147483647;
-                            top: 0;
-                            left: 0;
-                            height: ${width}px;
-                        }
-                    `));
-                } else if (place == "bottom"){
-                    css.appendChild(document.createTextNode(`
-                        html:before {
-                            background: ${color};
-                            transition: right 0.25s linear, opacity 0.85s ease-out;
-                            position: fixed;
-                            content: "";
-                            z-index: 2147483647;
-                            bottom: 0;
-                            left: 0;
-                            height: ${width}px;
-                        }
-                    `));
-                } else {
-                    console.log(`Unexpected place: ${place}`);
-                }
                 document.body.appendChild(css);
+                browser.storage.local.get("color").then((item) => {
+                    let color = hexToRgbA(item.color || "#FF0000");
+                    browser.storage.local.get("width").then((item) => {
+                        let width = item.width || "2";
+                        browser.storage.local.get("place").then((item) => {
+                            let place = item.place || "top";
+                            css.appendChild(document.createTextNode(`
+                                html:before {
+                                    background: ${color};
+                                    transition: right 0.25s linear, opacity 0.85s ease-out;
+                                    position: fixed;
+                                    content: "";
+                                    z-index: 2147483647;
+                                    ${place}: 0;
+                                    left: 0;
+                                    height: ${width}px;
+                                }
+                            `));
+                        }, onError);
+                    }, onError);
+                }, onError);
             }
 
             const pct = 100 - (inserted - loaded) * 100 / inserted;
