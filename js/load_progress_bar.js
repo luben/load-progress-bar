@@ -5,6 +5,7 @@
     var loaded   = 0;
     var last_pct = 0;
     var last_ts  = Date.now();
+    var finished = false;
     var css = null;
 
     const listenerCfg = {"once": true, "capture": true, "passive": true};
@@ -35,36 +36,38 @@
     browser.storage.local.get("place").then((item) => place = item.place || "top", onError);
 
     function updateProgress() {
-        if (document.body != null) {
+        if (document.body != null && !finished) {
             if (css == null) {
                 css = document.createElement('style');
                 css.type = 'text/css';
                 css.appendChild(document.createTextNode(`
                     html:before {
-                        background: linear-gradient(90deg, ${color}, ${color} 1%, rgba(0,0,0,0) 1%, rgba(0,0,0,0));
+                        right: 99%;
                     }
                 `));
                 if (place == "top") {
                     css.appendChild(document.createTextNode(`
                         html:before {
+                            background: ${color};
+                            transition: right 0.25s linear, opacity 0.85s ease-out;
                             position: fixed;
                             content: "";
                             z-index: 2147483647;
                             top: 0;
                             left: 0;
-                            right: 0;
                             height: ${width}px;
                         }
                     `));
                 } else if (place == "bottom"){
                     css.appendChild(document.createTextNode(`
                         html:before {
+                            background: ${color};
+                            transition: right 0.25s linear, opacity 0.85s ease-out;
                             position: fixed;
                             content: "";
                             z-index: 2147483647;
                             bottom: 0;
                             left: 0;
-                            right: 0;
                             height: ${width}px;
                         }
                     `));
@@ -73,14 +76,16 @@
                 }
                 document.body.appendChild(css);
             }
+
             const pct = 100 - (inserted - loaded) * 100 / inserted;
             const ts = Date.now()
-            if (pct < 100 && pct > last_pct && ts > last_ts + 50) {
+            if (pct <= 100 && pct > last_pct && ts > last_ts + 250) {
                 last_pct = pct;
                 last_ts = ts;
+                const space = 100 - pct;
                 css.firstChild.replaceWith(document.createTextNode(`
                     html:before {
-                        background: linear-gradient(90deg, ${color}, ${color} ${pct}%, rgba(0,0,0,0) ${pct}%, rgba(0,0,0,0));
+                        right: ${space}%;
                     }
                 `));
             }
@@ -90,11 +95,11 @@
     function onLoadHandler(node) {
         loaded++;
         updateProgress()
-        if (node.self == node && css != null) { // i.e. the window is loaded
+        if (!finished && node.self == node && css != null) { // i.e. the window is loaded
+            finished = true;
             css.firstChild.replaceWith(document.createTextNode(`
                 html:before {
-                    background: linear-gradient(90deg, ${color}, ${color} 100%, rgba(0,0,0,0) 100%, rgba(0,0,0,0));
-                    transition: opacity 0.85s ease-out;
+                    right: 0;
                     opacity: 0;
                 }
             `));
