@@ -44,18 +44,22 @@
                         let width = item.width || "2";
                         browser.storage.local.get("place").then((item) => {
                             let place = item.place || "top";
-                            css.appendChild(document.createTextNode(`
-                                html:before {
-                                    background: ${color};
-                                    transition: right 0.25s linear, opacity 0.85s ease-out;
-                                    position: fixed;
-                                    content: "";
-                                    z-index: 2147483647;
-                                    ${place}: 0;
-                                    left: 0;
-                                    height: ${width}px;
-                                }
-                            `));
+                            browser.storage.local.get("smooth").then((item) => {
+                                let smooth = item.smooth || "yes";
+                                let transition = ((smooth == "yes") ? "right 0.25s linear, " : "");
+                                css.appendChild(document.createTextNode(`
+                                    html:before {
+                                        background: ${color};
+                                        transition: ${transition} opacity 0.85s ease-out;
+                                        position: fixed;
+                                        content: "";
+                                        z-index: 2147483647;
+                                        ${place}: 0;
+                                        left: 0;
+                                        height: ${width}px;
+                                    }
+                                `));
+                            }, onError);
                         }, onError);
                     }, onError);
                 }, onError);

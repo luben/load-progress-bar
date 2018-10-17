@@ -3,7 +3,8 @@ function saveOptions(e) {
   browser.storage.local.set({
     "color": document.querySelector("#color").value,
     "width": document.querySelector("#width").value,
-    "place": document.querySelector("#place").value
+    "place": document.querySelector("#place").value,
+    "smooth": document.querySelector("#smooth").value
   });
 }
 
@@ -21,6 +22,10 @@ function restoreOptions() {
     document.querySelector("#place").value = result.place || "top";
   }
 
+  function setSmoothChoice(result) {
+    document.querySelector("#smooth").value = result.smooth || "yes";
+  }
+
   function onError(error) {
     console.log(`Error: ${error}`);
   }
@@ -28,6 +33,7 @@ function restoreOptions() {
   browser.storage.local.get("color").then(setColorChoice, onError);
   browser.storage.local.get("width").then(setWidthChoice, onError);
   browser.storage.local.get("place").then(setPlaceChoice, onError);
+  browser.storage.local.get("smooth").then(setSmoothChoice, onError);
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
