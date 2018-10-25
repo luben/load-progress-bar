@@ -3,10 +3,26 @@
 
     var inserted = 0;
     var loaded   = 0;
-    var last_pct = 0;
-    var last_ts  = Date.now();
+    var last_pct = 1;
+    var last_ts  = 0;
     var finished = false;
+    var setup_done = false;
     var css = null;
+
+    // load settings
+    var settings;
+    browser.storage.local.get({
+        color: "#FF0000",
+        width: "2",
+        place: "top",
+        smooth: "yes"
+    }).then((item) => {
+        if (css != null) {
+            setupCss(item)
+        } else {
+            settings = item
+        }
+    }, onError);
 
     const listenerCfg = {"once": true, "capture": true, "passive": true};
 
@@ -27,6 +43,24 @@
         return "rgba(255,0,0,1)";
     }
 
+    function setupCss(settings) {
+        setup_done = true;
+        let color = hexToRgbA(settings.color);
+        let transition = ((settings.smooth == "yes") ? "right 0.5s linear, " : "");
+        css.appendChild(document.createTextNode(`
+            html:before {
+                background: ${color};
+                transition: ${transition} opacity 0.85s ease-out;
+                position: fixed;
+                content: "";
+                z-index: 2147483647;
+                ${settings.place}: 0;
+                left: 0;
+                height: ${settings.width}px;
+            }
+        `));
+    }
+
     function updateProgress() {
         if (document.body != null && !finished) {
             if (css == null) {
@@ -38,36 +72,14 @@
                     }
                 `));
                 document.body.appendChild(css);
-                browser.storage.local.get("color").then((item) => {
-                    let color = hexToRgbA(item.color || "#FF0000");
-                    browser.storage.local.get("width").then((item) => {
-                        let width = item.width || "2";
-                        browser.storage.local.get("place").then((item) => {
-                            let place = item.place || "top";
-                            browser.storage.local.get("smooth").then((item) => {
-                                let smooth = item.smooth || "yes";
-                                let transition = ((smooth == "yes") ? "right 0.25s linear, " : "");
-                                css.appendChild(document.createTextNode(`
-                                    html:before {
-                                        background: ${color};
-                                        transition: ${transition} opacity 0.85s ease-out;
-                                        position: fixed;
-                                        content: "";
-                                        z-index: 2147483647;
-                                        ${place}: 0;
-                                        left: 0;
-                                        height: ${width}px;
-                                    }
-                                `));
-                            }, onError);
-                        }, onError);
-                    }, onError);
-                }, onError);
+            }
+            if (settings != null && !setup_done) {
+                setupCss(settings);
             }
 
             const pct = 100 - (inserted - loaded) * 100 / inserted;
             const ts = Date.now()
-            if (pct <= 100 && pct > last_pct && ts > last_ts + 250) {
+            if (pct <= 100 && pct > last_pct && ts >= last_ts + 250) {
                 last_pct = pct;
                 last_ts = ts;
                 const space = 100 - pct;
@@ -88,10 +100,17 @@
             css.firstChild.replaceWith(document.createTextNode(`
                 html:before {
                     right: 0;
-                    opacity: 0;
                 }
             `));
-            setTimeout(function() { css.remove() }, 850);
+            setTimeout(function() {
+                css.firstChild.replaceWith(document.createTextNode(`
+                    html:before {
+                        right: 0;
+                        opacity: 0;
+                    }
+                `));
+                setTimeout(function() { css.remove() }, 850);
+            }, 250);
         }
     }
 
