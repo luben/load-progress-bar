@@ -25,7 +25,7 @@ function restoreOptions() {
       color: "#FF0000",
       width: "2",
       place: "top",
-      smooth: "yes"
+      smooth: "no"
   }).then(updateSettings, onError);
 }
 

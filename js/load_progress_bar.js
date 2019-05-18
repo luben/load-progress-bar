@@ -15,7 +15,7 @@
         color: "#FF0000",
         width: "2",
         place: "top",
-        smooth: "yes"
+        smooth: "no"
     }).then((item) => {
         if (css != null) {
             setupCss(item)
