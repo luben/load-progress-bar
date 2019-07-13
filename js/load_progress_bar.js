@@ -14,6 +14,7 @@
     browser.storage.local.get({
         color: "#FF0000",
         width: "2",
+        opacity: "0.75",
         place: "top",
         smooth: "no"
     }).then((item) => {
@@ -46,10 +47,12 @@
     function setupCss(settings) {
         setup_done = true;
         let color = hexToRgbA(settings.color);
+        let opacity = settings.opacity;
         let transition = ((settings.smooth == "yes") ? "right 0.5s linear, " : "");
         css.appendChild(document.createTextNode(`
             html:before {
                 background: ${color};
+                opacity: ${opacity};
                 transition: ${transition} opacity 0.85s ease-out;
                 position: fixed;
                 content: "";
@@ -106,11 +109,11 @@
                 css.firstChild.replaceWith(document.createTextNode(`
                     html:before {
                         right: 0;
-                        opacity: 0;
+                        opacity: 0 !important;
                     }
                 `));
                 setTimeout(function() { css.remove() }, 850);
-            }, 250);
+            }, 150);
         }
     }
 
