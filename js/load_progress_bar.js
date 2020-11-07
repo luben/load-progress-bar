@@ -112,7 +112,6 @@
                         opacity: 0 !important;
                     }
                 `));
-                setTimeout(function() { css.remove() }, 850);
             }, 150);
         }
     }
