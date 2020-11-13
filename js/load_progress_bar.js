@@ -112,6 +112,12 @@
                         opacity: 0 !important;
                     }
                 `));
+                setTimeout(function() {
+                    css.firstChild.replaceWith(document.createTextNode(`
+                        html:before {
+                            z-index: -2147483646;
+                        }`)
+                    )}, 850);
             }, 150);
         }
     }
