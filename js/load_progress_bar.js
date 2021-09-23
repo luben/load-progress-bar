@@ -13,6 +13,8 @@
     var settings;
     browser.storage.local.get({
         color: "#FF0000",
+        isRainbow: false,
+        rainbow_size: 3.0,
         width: "2",
         opacity: "0.75",
         place: "top",
@@ -47,21 +49,59 @@
     function setupCss(settings) {
         setup_done = true;
         let color = hexToRgbA(settings.color);
+        let isRainbow = settings.isRainbow;
+        let rainbow_size = settings.rainbow_size;
         let opacity = settings.opacity;
         let transition = ((settings.smooth == "yes") ? "right 0.5s linear, " : "");
-        css.appendChild(document.createTextNode(`
-            html:before {
-                background: ${color};
-                opacity: ${opacity};
-                transition: ${transition} opacity 0.85s ease-out;
-                position: fixed;
-                content: "";
-                z-index: 2147483647;
-                ${settings.place}: 0;
-                left: 0;
-                height: ${settings.width}px;
-            }
-        `));
+
+        let cssStyles =
+        `
+        html:before {
+            background: ${color};
+            opacity: ${opacity};
+            transition: ${transition} opacity 0.85s ease-out;
+            position: fixed;
+            content: "";
+            z-index: 2147483647;
+            ${settings.place}: 0;
+            left: 0;
+            height: ${settings.width}px;
+        `;
+        if(isRainbow){
+            cssStyles += 
+            `
+                background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3, #f30059, #ff2400);
+                background-size: ${rainbow_size*100}% ${rainbow_size*100}%;
+
+                -webkit-animation: rainbow 18s ease infinite;
+                -z-animation: rainbow 18s ease infinite;
+                -o-animation: rainbow 18s ease infinite;
+                  animation: rainbow 18s ease infinite;}
+
+                @-webkit-keyframes rainbow {
+                    0%{background-position:0% 82%}
+                    50%{background-position:100% 19%}
+                    100%{background-position:0% 82%}
+                }
+                @-moz-keyframes rainbow {
+                    0%{background-position:0% 82%}
+                    50%{background-position:100% 19%}
+                    100%{background-position:0% 82%}
+                }
+                @-o-keyframes rainbow {
+                    0%{background-position:0% 82%}
+                    50%{background-position:100% 19%}
+                    100%{background-position:0% 82%}
+                }
+                @keyframes rainbow { 
+                    0%{background-position:0% 82%}
+                    50%{background-position:100% 19%}
+                    100%{background-position:0% 82%}
+                }
+            `;
+        }
+        cssStyles += `}`;
+        css.appendChild(document.createTextNode(cssStyles));
     }
 
     function updateProgress() {
