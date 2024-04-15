@@ -16,7 +16,7 @@ function restoreOptions() {
   function updateSettings(result) {
     document.querySelector("#color").value = result.color;
     document.querySelector("#width").value = result.width;
-    document.querySelector("#isRainbow").value = result.isRainbow,
+    document.querySelector("#isRainbow").checked = result.isRainbow,
     document.querySelector("#rainbow_size").value = result.rainbow_size,
     document.querySelector("#opacity").value = result.opacity;
     document.querySelector("#place").value = result.place;
