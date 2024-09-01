@@ -33,6 +33,30 @@
         console.log(`Error: ${error}`);
     }
 
+    let observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeName == "BODY") {
+                    inserted++;
+                    node.addEventListener( "load", () => onLoadHandler(node), listenerCfg);
+                    updateProgress();
+                } else if (((node.nodeName == "SCRIPT" ||
+                            node.nodeName == "VIDEO"  || node.nodeName == "IMG"    ||
+                            node.nodeName == "IFRAME" || node.nodeName == "FRAME") && node.src != "" ) ||
+                            (node.nodeName == "LINK" && node.rel == "stylesheet" && window.matchMedia(node.media))
+                ) {
+                    inserted++;
+                    node.addEventListener( "error",   () => onLoadHandler(node), listenerCfg);
+                    node.addEventListener( "abort",   () => onLoadHandler(node), listenerCfg);
+                    node.addEventListener( "load",    () => onLoadHandler(node), listenerCfg);
+                    updateProgress();
+                }
+            });
+        });
+    });
+    window.addEventListener( "load", () => onLoadHandler(window), listenerCfg);
+    observer.observe(document, {childList: true, subtree: true});
+
     function hexToRgbA(hex){
         var c;
         if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
@@ -68,7 +92,7 @@
             height: ${settings.width}px;
         `;
         if(isRainbow){
-            cssStyles += 
+            cssStyles +=
             `
                 background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3, #f30059, #ff2400);
                 background-size: ${rainbow_size*100}% ${rainbow_size*100}%;
@@ -93,7 +117,7 @@
                     50%{background-position:100% 19%}
                     100%{background-position:0% 82%}
                 }
-                @keyframes rainbow { 
+                @keyframes rainbow {
                     0%{background-position:0% 82%}
                     50%{background-position:100% 19%}
                     100%{background-position:0% 82%}
@@ -140,6 +164,7 @@
         updateProgress()
         if (!finished && node.self == node && css != null) { // i.e. the window is loaded
             finished = true;
+            observer.disconnect();
             css.firstChild.replaceWith(document.createTextNode(`
                 html:before {
                     right: 0;
@@ -162,27 +187,4 @@
         }
     }
 
-    let observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            mutation.addedNodes.forEach((node) => {
-                if (node.nodeName == "BODY") {
-                    inserted++;
-                    node.addEventListener( "load", () => onLoadHandler(node), listenerCfg);
-                    updateProgress();
-                } else if (((node.nodeName == "SCRIPT" ||
-                            node.nodeName == "VIDEO"  || node.nodeName == "IMG"    ||
-                            node.nodeName == "IFRAME" || node.nodeName == "FRAME") && node.src != "" ) ||
-                            (node.nodeName == "LINK" && node.rel == "stylesheet" && window.matchMedia(node.media))
-                ) {
-                    inserted++;
-                    node.addEventListener( "error",   () => onLoadHandler(node), listenerCfg);
-                    node.addEventListener( "abort",   () => onLoadHandler(node), listenerCfg);
-                    node.addEventListener( "load",    () => onLoadHandler(node), listenerCfg);
-                    updateProgress();
-                }
-            });
-        });
-    });
-    window.addEventListener( "load", () => onLoadHandler(window), listenerCfg);
-    observer.observe(document, {childList: true, subtree: true});
 })();
